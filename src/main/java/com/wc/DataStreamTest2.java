@@ -1,7 +1,6 @@
 package com.wc;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -10,8 +9,10 @@ import org.apache.flink.util.Collector;
 
 /**
  *  DataStream 流处理
+ *
+ *  nc -lk 8000 ,启动 socket 服务
  */
-public class DataStreamTest {
+public class DataStreamTest2 {
     public static void main(String[] args) throws Exception{
 
         //1.准备本地执行环境
@@ -21,8 +22,7 @@ public class DataStreamTest {
         environment.setParallelism(2);
 
         //2.输入
-        String inputPath = "D:\\work\\flink-demo\\src\\main\\resources\\word.txt";
-        DataStreamSource<String> dataSource = environment.readTextFile(inputPath);
+        DataStreamSource<String> dataSource = environment.socketTextStream("192.168.10.100",8000);
 
         DataStream<Tuple2<String, Integer>> result = dataSource.flatMap(new MyFlatMap())
                 .keyBy("0")
